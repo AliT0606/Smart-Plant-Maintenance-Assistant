@@ -1,0 +1,25 @@
+-- 1. Veritabanını Oluştur
+CREATE DATABASE AkilliBahceDB;
+GO
+USE AkilliBahceDB;
+GO
+
+-- 2. Bitkiler Tablosu (Ana Bilgiler)
+CREATE TABLE Bitkiler (
+    BitkiID INT PRIMARY KEY IDENTITY(1,1),
+    Ad NVARCHAR(100) NOT NULL,
+    Tur NVARCHAR(50),
+    EkimTarihi DATE,
+    SulamaPeriyodu INT, -- Kaç günde bir?
+    Konum NVARCHAR(20), -- 'İç Mekan' veya 'Dış Mekan' [cite: 6, 7]
+    Sehir NVARCHAR(50) DEFAULT 'Istanbul' -- API için gerekli
+);
+
+-- 3. Bakım Kayıtları (Geçmiş ve Raporlama İçin)
+CREATE TABLE BakimKayitlari (
+    KayitID INT PRIMARY KEY IDENTITY(1,1),
+    BitkiID INT FOREIGN KEY REFERENCES Bitkiler(BitkiID) ON DELETE CASCADE,
+    IslemTarihi DATETIME DEFAULT GETDATE(),
+    IslemTipi NVARCHAR(50), -- 'Sulama', 'Gübreleme' [cite: 13]
+    Notlar NVARCHAR(MAX)
+);
