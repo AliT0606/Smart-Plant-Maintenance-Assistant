@@ -2,7 +2,11 @@ import requests
 
 def bitki_bilgisi_getir(bitki_turu):
     # Perenual API
+<<<<<<< Updated upstream
     api_key = "sk-0zds69cc2f32ec01016010"
+=======
+    api_key = "Ssk-0zds69cc2f32ec01016010"
+>>>>>>> Stashed changes
     # Tür ismine göre arama yapan endpoint
     url = f"https://perenual.com/api/species-list?key={api_key}&q={bitki_turu}"
     
