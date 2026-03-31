@@ -1,4 +1,5 @@
 import pyodbc
+from perenual_service import bitki_bilgisi_getir
 
 def baglan():
     try:
@@ -17,14 +18,23 @@ def baglan():
         print(f"Veritabanı bağlantı hatası: {e}")
         return None
 
-def bitki_ekle(ad, tur, ekim_tarihi, periyod, konum):
+def akilli_bitki_ekle(ad, tur, ekim_tarihi, konum):
+    
+    api_bilgileri = bitki_bilgisi_getir(tur)
+    
+    
+    hesaplanan_periyot = 7 
+    
+    if api_bilgileri:
+        hesaplanan_periyot = api_bilgileri["periyot_gun"]
+        print(f"[{tur}] için API bilgileri alındı! Işık: {api_bilgileri['isik']}, Sulama Periyodu: {hesaplanan_periyot} gün.")
+    
     conn = baglan()
     if conn:
         cursor = conn.cursor()
-        # SQL tablosuna veri ekleme sorgusu [cite: 12]
         sorgu = "INSERT INTO Bitkiler (Ad, Tur, EkimTarihi, SulamaPeriyodu, Konum) VALUES (?, ?, ?, ?, ?)"
-        cursor.execute(sorgu, (ad, tur, ekim_tarihi, periyod, konum))
-        conn.commit() # Değişiklikleri kaydet [cite: 13]
+        cursor.execute(sorgu, (ad, tur, ekim_tarihi, hesaplanan_periyot, konum))
+        conn.commit() 
         conn.close()
         print(f"{ad} başarıyla veritabanına eklendi.")
 
