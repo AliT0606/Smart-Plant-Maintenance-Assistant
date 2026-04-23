@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Yardım Merkezi - Akıllı Bahçe{% endblock %}
+{% block content %}
+<main class="main-content"><div class="page-content" style="max-width:800px">
+  <div class="page-header"><h2 class="page-title">Yardım Merkezi</h2><p class="page-subtitle">Sıkça sorulan sorular ve sorun giderme rehberi.</p></div>
+  <div class="card" style="padding:2.5rem">
+    <h3 style="margin-bottom:1.5rem">Sıkça Sorulan Sorular</h3>
+    <div class="faq-item"><h4>Nasıl yeni bitki ekleyebilirim?</h4><p>Sol menünün en altındaki "Yeni Bitki Ekle" butonuna tıklayarak bitkinizin fotoğrafını, türünü ve bakım ihtiyaçlarını girebilirsiniz.</p></div>
+    <hr class="divider">
+    <div class="faq-item"><h4>Sulama bildirimlerini nasıl kapatırım?</h4><p>Panel sayfasından bitkinizi seçerek düzenleme seçeneklerine ulaşabilirsiniz.</p></div>
+    <hr class="divider">
+    <div class="faq-item"><h4>Bitkimin türünü bilmiyorum, ne yapmalıyım?</h4><p>Yapay Zeka Teşhisi sayfasından fotoğraf yükleyerek bitkinin türünü ve olası hastalıklarını tespit edebilirsiniz.</p></div>
+  </div>
+  <div class="card contact-card">
+    <span class="material-symbols-outlined" style="font-size:3rem;color:var(--primary);font-variation-settings:'FILL' 1">support_agent</span>
+    <h3>Daha fazla yardıma mı ihtiyacınız var?</h3>
+    <p>Destek ekibimiz hafta içi 09:00-18:00 saatleri arasında hizmetinizdedir.</p>
+    <a href="mailto:destek@akillibahce.com" class="btn-primary">Bize Ulaşın</a>
+  </div>
+</div></main>
+{% endblock %}

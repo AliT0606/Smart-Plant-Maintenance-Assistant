@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Bitki Kütüphanesi - Akıllı Bahçe{% endblock %}
+
+{% block content %}
+<main class="main-content">
+  <div class="page-content">
+    <div class="page-header">
+      <h2 class="page-title">Bitki Kütüphanesi</h2>
+      <p class="page-subtitle">Bakım özelliklerine göre filtrelenmiş bitki rehberi.</p>
+    </div>
+
+    <form method="get" class="library-search-form">
+      <div class="library-search-wrap">
+        <span class="material-symbols-outlined">search</span>
+        <input type="text" name="q" value="{{ query }}" placeholder="Bitki adı veya bilimsel adı arayın..." class="library-search-input" autofocus>
+        {% if query %}<a href="{% url 'kutuphane' %}" class="clear-search">✕</a>{% endif %}
+      </div>
+    </form>
+
+    {% if query and not library_plants %}
+    <div class="empty-state">
+      <span class="material-symbols-outlined">search_off</span>
+      <p>"{{ query }}" için sonuç bulunamadı.</p>
+    </div>
+    {% endif %}
+
+    <div class="library-grid">
+      {% for plant in library_plants %}
+      <div class="library-card">
+        <div class="library-card-img" style="background-image: url('{{ plant.image_url }}');">
+          <span class="type-badge">{{ plant.type }}</span>
+        </div>
+        
+        <div class="library-card-content">
+          <div class="library-card-header">
+            <div>
+              <h3>{{ plant.name }}</h3>
+              <p class="species-small">{{ plant.species }}</p>
+            </div>
+          </div>
+
+          <div class="prop-list">
+            <div class="prop-row">
+              <span class="material-symbols-outlined prop-icon blue">water_drop</span>
+              <span class="prop-label">Sulama:</span>
+              <span class="prop-val">{{ plant.water }}</span>
+            </div>
+            <div class="prop-row">
+              <span class="material-symbols-outlined prop-icon amber">wb_sunny</span>
+              <span class="prop-label">Işık:</span>
+              <span class="prop-val">{{ plant.light }}</span>
+            </div>
+            <div class="prop-row">
+              <span class="material-symbols-outlined prop-icon green">fitness_center</span>
+              <span class="prop-label">Zorluk:</span>
+              <span class="prop-val">{{ plant.difficulty }}</span>
+            </div>
+          </div>
+
+          <div class="tag-row">
+            {% if plant.air_purifier %}<span class="tag green">🌿 Temizleyici</span>{% endif %}
+            {% if plant.toxic %}<span class="tag red">⚠️ Toksik</span>{% endif %}
+            {% if not plant.toxic %}<span class="tag blue">✔ Evcil Dostu</span>{% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</main>
+{% endblock %}
