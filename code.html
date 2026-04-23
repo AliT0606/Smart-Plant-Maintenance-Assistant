@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#72796e",
+                        "on-tertiary-fixed": "#2c160e",
+                        "surface-container-highest": "#e4e3db",
+                        "secondary-fixed-dim": "#b0ceb4",
+                        "on-primary-fixed": "#002201",
+                        "on-tertiary-fixed-variant": "#5d4037",
+                        "secondary-container": "#c9e7cc",
+                        "surface-dim": "#dcdad2",
+                        "background": "#fbf9f1",
+                        "surface": "#fbf9f1",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#334d38",
+                        "secondary": "#4a654f",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c2c9bb",
+                        "on-primary-container": "#9dd090",
+                        "tertiary-fixed": "#ffdbd0",
+                        "on-secondary-fixed": "#062010",
+                        "surface-variant": "#e4e3db",
+                        "on-primary-fixed-variant": "#23501e",
+                        "on-surface": "#1b1c17",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#bcf0ae",
+                        "primary": "#154212",
+                        "surface-container-high": "#eae8e0",
+                        "tertiary-container": "#674940",
+                        "on-background": "#1b1c17",
+                        "primary-fixed-dim": "#a1d494",
+                        "secondary-fixed": "#cceacf",
+                        "surface-tint": "#3b6934",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#fbf9f1",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#a1d494",
+                        "surface-container-low": "#f5f4ec",
+                        "surface-container": "#f0eee6",
+                        "inverse-on-surface": "#f3f1e9",
+                        "on-tertiary-container": "#e3baae",
+                        "tertiary-fixed-dim": "#e7bdb1",
+                        "on-secondary-container": "#4e6953",
+                        "on-surface-variant": "#42493e",
+                        "inverse-surface": "#30312c",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#2d5a27",
+                        "tertiary": "#4e332a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .tonal-layering { transition: background-color 0.3s ease; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-[#fbf9f1]/80 backdrop-blur-xl fixed top-0 z-50 flex justify-between items-center w-full px-8 h-20">
+<div class="text-2xl font-extrabold text-[#154212] tracking-tighter">
+            Killi Bahçe - Akıllı Bitki Bakım Asistanı
+        </div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<input class="bg-surface-container-high border-none rounded-full px-6 py-2 w-64 focus:ring-2 focus:ring-primary focus:bg-surface-bright text-sm transition-all" placeholder="Bitki Ara..." type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-2 text-on-surface-variant">search</span>
+</div>
+<div class="flex gap-4">
+<button class="material-symbols-outlined text-[#42493e] hover:bg-[#e4e3db] p-2 rounded-full transition-all">notifications</button>
+<button class="material-symbols-outlined text-[#42493e] hover:bg-[#e4e3db] p-2 rounded-full transition-all">settings</button>
+<div class="w-10 h-10 rounded-full bg-secondary-container overflow-hidden border-2 border-primary/10">
+<img class="w-full h-full object-cover" data-alt="close-up portrait of a professional gardener in soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCphgaEV6IGWsXU69PEwvKDVYrrc56BDh1KxW7DL-S_cJ9C7zUxxLLUdAtd57z4QiNWnY-Tk9CI-UxV1CcgMkqhsuF803I7Ck3VmQ0CLVmMqP_LR4y67wd7q-xFV0d0SXDv9azwIHRhWZk8jibhoq5F_ImyCTpw9WHnpKjBYTDPsSXK0mUjfmyf3fKFel67oNj6YOopU95kiW0AUlZkVS-RrY0-uSenl5Y_2lHpE6rYDfgGXf3phunCZqm77oeiQa-OIffFYy-Et0A"/>
+</div>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-20 bottom-0 flex flex-col p-6 gap-2 w-72 bg-[#f5f4ec]">
+<div class="mb-8 px-4">
+<h2 class="text-lg font-bold text-[#154212]">Bahçem</h2>
+<p class="text-xs text-on-surface-variant font-medium opacity-70">12 Sağlıklı Bitki</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-4 bg-[#e4e3db] text-[#154212] rounded-xl px-4 py-3 font-bold translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-4 text-[#42493e] px-4 py-3 rounded-xl hover:bg-[#e4e3db] transition-all" href="#">
+<span class="material-symbols-outlined">library_books</span>
+<span>Bitki Kütüphanesi</span>
+</a>
+<a class="flex items-center gap-4 text-[#42493e] px-4 py-3 rounded-xl hover:bg-[#e4e3db] transition-all" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span>Bakım Takvimi</span>
+</a>
+<a class="flex items-center gap-4 text-[#42493e] px-4 py-3 rounded-xl hover:bg-[#e4e3db] transition-all" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span>İstatistikler</span>
+</a>
+</nav>
+<button class="mt-auto bg-primary text-on-primary rounded-xl py-4 font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add</span>
+            Yeni Bitki Ekle
+        </button>
+</aside>
+<!-- Main Content -->
+<main class="pl-72 pt-20 pb-16 min-h-screen">
+<div class="p-8 grid grid-cols-12 gap-8">
+<!-- Left Column: Thirsty Today -->
+<section class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<div class="bg-surface-container-low rounded-3xl p-6 h-fit border border-outline-variant/10">
+<h3 class="text-xl font-bold text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">water_drop</span>
+                        Bugün Susayanlar
+                    </h3>
+<div class="space-y-3">
+<label class="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-2xl cursor-pointer hover:bg-surface-bright transition-all group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface group-hover:text-primary transition-colors">Barış Çiçeği</span>
+<span class="text-xs text-on-surface-variant">Sulama</span>
+</div>
+</label>
+<label class="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-2xl cursor-pointer hover:bg-surface-bright transition-all group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface group-hover:text-primary transition-colors">Sukulent</span>
+<span class="text-xs text-on-surface-variant">Su</span>
+</div>
+</label>
+<label class="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-2xl cursor-pointer hover:bg-surface-bright transition-all group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface group-hover:text-primary transition-colors">Orkide</span>
+<span class="text-xs text-on-surface-variant">Gübre</span>
+</div>
+</label>
+<label class="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-2xl cursor-pointer hover:bg-surface-bright transition-all group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface group-hover:text-primary transition-colors">Para Çiçeği</span>
+<span class="text-xs text-on-surface-variant">Kontrol</span>
+</div>
+</label>
+</div>
+<div class="mt-8 pt-6 border-t border-outline-variant/20">
+<div class="relative">
+<input class="w-full bg-surface-container border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:bg-surface-bright" placeholder="Bitki Ara..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant text-xl">search</span>
+</div>
+</div>
+</div>
+<!-- Small Secondary Bento Card -->
+<div class="bg-primary-container text-on-primary-container p-6 rounded-3xl overflow-hidden relative group">
+<div class="relative z-10">
+<p class="text-xs uppercase tracking-widest font-bold opacity-80 mb-2">Haftalık İpucu</p>
+<h4 class="text-lg font-bold leading-tight">Bitkilerinizi sabah saatlerinde sulamak, mantar oluşumunu engeller.</h4>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-8xl opacity-10 group-hover:scale-110 transition-transform">eco</span>
+</div>
+</section>
+<!-- Right Column: Plant Detail Profile -->
+<section class="col-span-12 lg:col-span-8">
+<div class="bg-surface-container-lowest rounded-[2.5rem] p-8 md:p-12 shadow-sm relative overflow-hidden">
+<!-- Glassmorphism decorative circles -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-secondary-container/30 rounded-full blur-3xl"></div>
+<div class="absolute top-1/2 -left-32 w-48 h-48 bg-primary-fixed/20 rounded-full blur-3xl"></div>
+<div class="relative z-10 flex flex-col md:flex-row gap-12">
+<!-- Image Section -->
+<div class="flex flex-col items-center gap-6">
+<div class="relative">
+<div class="w-64 h-64 rounded-full p-2 bg-gradient-to-tr from-primary to-secondary-fixed">
+<div class="w-full h-full rounded-full overflow-hidden bg-surface-container-high flex items-center justify-center relative">
+<img class="w-full h-full object-cover" data-alt="lush green Spathiphyllum Peace Lily plant with elegant white blooms in a minimal ceramic pot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8kv09RDWl_QKvbPY4WMUqInWnq1Wvwkpxac9Xx0THueFaO-aCmMhD2cfcibNmlEqi0hRfvgWFDTN4w2lxeiOi0KX5mWGFjDgFpQCWh3j6ooXIuV6eLOLahCmAxQsmx89m_o6PuLaXhLlUB1BYSlfdLKfuZofGXl34c5vi3BBF8eRtt4iFMvBDyeko0yUTpVZHx9yL7Ow3NVpLzaXA4TLV4VRCVkdoAC8rollQ2qS-f8f5l8NLsblpde8hm9m5Quf-e_dmQivtIQc"/>
+<div class="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+<button class="bg-white/90 text-primary px-4 py-2 rounded-full text-xs font-bold shadow-lg">resim ekle</button>
+</div>
+</div>
+</div>
+<div class="absolute bottom-4 right-4 bg-primary text-on-primary p-3 rounded-full shadow-xl">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">eco</span>
+</div>
+</div>
+<div class="text-center">
+<h2 class="text-3xl font-extrabold text-primary tracking-tight">Barış Çiçeği</h2>
+<p class="text-on-surface-variant font-medium">Spathiphyllum</p>
+</div>
+</div>
+<!-- Stats & Actions Section -->
+<div class="flex-1 flex flex-col justify-between">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+<div class="bg-surface-container-low p-4 rounded-2xl flex flex-col gap-1">
+<span class="text-[10px] uppercase tracking-tighter font-bold text-on-surface-variant">Konum</span>
+<span class="font-bold text-primary">Salon</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-2xl flex flex-col gap-1">
+<span class="text-[10px] uppercase tracking-tighter font-bold text-on-surface-variant">Son Sulama</span>
+<span class="font-bold text-primary">2 gün önce</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-2xl flex flex-col gap-1">
+<span class="text-[10px] uppercase tracking-tighter font-bold text-on-surface-variant">Son Gübre</span>
+<span class="font-bold text-primary">1 ay önce</span>
+</div>
+</div>
+<div class="mb-10">
+<h4 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4">Bakım İhtiyacı</h4>
+<div class="flex flex-wrap gap-4">
+<div class="flex items-center gap-3 bg-secondary-fixed text-on-secondary-fixed px-5 py-3 rounded-full">
+<span class="material-symbols-outlined text-xl">opacity</span>
+<span class="font-bold">Sulama: Orta</span>
+</div>
+<div class="flex items-center gap-3 bg-tertiary-fixed text-on-tertiary-fixed px-5 py-3 rounded-full">
+<span class="material-symbols-outlined text-xl">light_mode</span>
+<span class="font-bold">Işık: Dolaylı Güneş</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 mt-auto">
+<button class="flex-1 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-2xl py-4 font-bold flex items-center justify-center gap-2 hover:shadow-lg transition-all scale-98 active:opacity-80">
+<span class="material-symbols-outlined">check_circle</span>
+                                    Sulanmış Olarak İşaretle
+                                </button>
+<button class="flex-1 bg-secondary-container text-on-secondary-container rounded-2xl py-4 font-bold flex items-center justify-center gap-2 hover:bg-outline-variant/30 transition-all">
+<span class="material-symbols-outlined">edit_note</span>
+                                    Not Ekle
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Info Section -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="bg-surface-container rounded-3xl p-6">
+<h5 class="font-bold text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">health_and_safety</span>
+                            Sağlık Durumu
+                        </h5>
+<div class="w-full bg-surface-container-high h-3 rounded-full overflow-hidden">
+<div class="bg-primary w-[85%] h-full rounded-full"></div>
+</div>
+<p class="text-xs text-on-surface-variant mt-2 font-medium">%85 - Çok Sağlıklı</p>
+</div>
+<div class="bg-surface-container rounded-3xl p-6">
+<h5 class="font-bold text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">history</span>
+                            Yaklaşan Görevler
+                        </h5>
+<ul class="text-sm space-y-2 text-on-surface-variant">
+<li class="flex justify-between items-center">
+<span>Yaprak Temizliği</span>
+<span class="font-bold text-primary">Yarın</span>
+</li>
+<li class="flex justify-between items-center">
+<span>Saksı Değişimi</span>
+<span class="font-bold text-on-surface-variant opacity-60">2 ay sonra</span>
+</li>
+</ul>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer / Bottom Summary Bar -->
+<footer class="fixed bottom-0 right-0 left-72 px-8 py-4 flex justify-between items-center bg-[#fbf9f1] border-t border-[#e4e3db]/30 z-40 backdrop-blur-md">
+<div class="flex gap-8">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-plus-jakarta text-xs uppercase tracking-widest font-bold text-[#154212]">Toplam Bitki: 12</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="font-plus-jakarta text-xs uppercase tracking-widest font-bold text-[#154212]">Bugün Yapılması Gereken: 3</span>
+</div>
+</div>
+<div class="flex gap-4">
+<a class="font-plus-jakarta text-xs uppercase tracking-widest font-bold text-[#42493e] hover:text-[#2D5A27] transition-all" href="#">Yardım Merkezi</a>
+<span class="text-[#42493e] opacity-30">•</span>
+<a class="font-plus-jakarta text-xs uppercase tracking-widest font-bold text-[#42493e] hover:text-[#2D5A27] transition-all" href="#">Gizlilik Politikası</a>
+</div>
+<div class="text-[#42493e] text-[10px] font-bold opacity-60">
+            © 2024 KILLI BAHÇE • SİSTEM DURUMU: ÇEVRİMİÇİ
+        </div>
+</footer>
+</body></html>

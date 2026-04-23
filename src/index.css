@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+@theme {
+  --color-outline: #72796e;
+  --color-on-tertiary-fixed: #2c160e;
+  --color-surface-container-highest: #e4e3db;
+  --color-secondary-fixed-dim: #b0ceb4;
+  --color-on-primary-fixed: #002201;
+  --color-on-tertiary-fixed-variant: #5d4037;
+  --color-secondary-container: #c9e7cc;
+  --color-surface-dim: #dcdad2;
+  --color-background: #fbf9f1;
+  --color-surface: #fbf9f1;
+  --color-error: #ba1a1a;
+  --color-on-error-container: #93000a;
+  --color-on-secondary-fixed-variant: #334d38;
+  --color-secondary: #4a654f;
+  --color-on-secondary: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-outline-variant: #c2c9bb;
+  --color-on-primary-container: #9dd090;
+  --color-tertiary-fixed: #ffdbd0;
+  --color-on-secondary-fixed: #062010;
+  --color-surface-variant: #e4e3db;
+  --color-on-primary-fixed-variant: #23501e;
+  --color-on-surface: #1b1c17;
+  --color-surface-container-lowest: #ffffff;
+  --color-primary-fixed: #bcf0ae;
+  --color-primary: #154212;
+  --color-surface-container-high: #eae8e0;
+  --color-tertiary-container: #674940;
+  --color-on-background: #1b1c17;
+  --color-primary-fixed-dim: #a1d494;
+  --color-secondary-fixed: #cceacf;
+  --color-surface-tint: #3b6934;
+  --color-on-error: #ffffff;
+  --color-surface-bright: #fbf9f1;
+  --color-on-primary: #ffffff;
+  --color-inverse-primary: #a1d494;
+  --color-surface-container-low: #f5f4ec;
+  --color-surface-container: #f0eee6;
+  --color-inverse-on-surface: #f3f1e9;
+  --color-on-tertiary-container: #e3baae;
+  --color-tertiary-fixed-dim: #e7bdb1;
+  --color-on-secondary-container: #4e6953;
+  --color-on-surface-variant: #42493e;
+  --color-inverse-surface: #30312c;
+  --color-on-tertiary: #ffffff;
+  --color-primary-container: #2d5a27;
+  --color-tertiary: #4e332a;
+  
+  --font-headline: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Plus Jakarta Sans", sans-serif;
+  --font-label: "Plus Jakarta Sans", sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+@layer utilities {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .tonal-layering {
+    transition: background-color 0.3s ease;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* === DERIN ORMAN - DARK MODE === */
+.dark {
+  --color-background: #0e1a0c;
+  --color-surface: #131f10;
+  --color-surface-bright: #1e2e1a;
+  --color-surface-container-lowest: #0a1208;
+  --color-surface-container-low: #141f11;
+  --color-surface-container: #1a2716;
+  --color-surface-container-high: #1f2f1b;
+  --color-surface-container-highest: #253621;
+  --color-surface-dim: #0e1a0c;
+  --color-surface-variant: #253621;
+  --color-on-surface: #d6e8d0;
+  --color-on-surface-variant: #9ab594;
+  --color-on-background: #d6e8d0;
+  --color-primary: #6dd66a;
+  --color-on-primary: #003a01;
+  --color-primary-container: #1a4f18;
+  --color-on-primary-container: #89f484;
+  --color-secondary: #8fbc93;
+  --color-on-secondary: #1c3620;
+  --color-secondary-container: #334c37;
+  --color-on-secondary-container: #aad8ae;
+  --color-outline: #4d6649;
+  --color-outline-variant: #2d3e2a;
+  --color-inverse-primary: #2d6229;
+  --color-primary-fixed: #89f484;
+  --color-primary-fixed-dim: #6dd66a;
+  --color-secondary-fixed: #aad8ae;
+  --color-secondary-fixed-dim: #8fbc93;
+  --color-tertiary-fixed: #f8b8a9;
+  --color-tertiary-fixed-dim: #d99d8e;
+  --color-tertiary-container: #5a2e25;
+  --color-on-tertiary-container: #f8b8a9;
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-on-error: #690005;
+  --color-on-error-container: #ffdad6;
+  --color-on-tertiary-fixed: #2c160e;
+  --color-on-tertiary-fixed-variant: #5d4037;
+}
+
+html {
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+}
