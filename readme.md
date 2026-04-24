@@ -53,8 +53,6 @@ Python 3.10+. Nothing fancy.
 | M. Ünal Öztürk | Backend stuff |
 | Fikriye Akgün | Frontend |
 
-## What's next maybe
 
-- Telegram bot so you get texts
 
 
