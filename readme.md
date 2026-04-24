@@ -1,10 +1,10 @@
 # 🌿 Smart Plant Maintenance Assistant
 
-> We killed a lot of plants making this. Hopefully you won't.
+
 
 ## So what's this thing?
 
-Web app. Tells you when to water your plants. Checks the weather so you don't water before rain. Warns you about frost. Diagnoses sick plants.
+It's a web app. Tells you when to water your plants. Checks the weather so you don't water before rain. Warns you about frost. Diagnoses sick plants.
 
 Runs in the background too. Close the tab, you'll still get notifications.
 
@@ -12,23 +12,23 @@ Runs in the background too. Close the tab, you'll still get notifications.
 
 **Add a plant. That's it.**
 
-Type "Monstera". App goes and finds how much water it needs. You don't need to google anything.
+Type "Monstera." The app goes and finds out how much water it needs. You don't have to Google anything.
 
 **Open it in the morning.**
 
-Here's what needs water today. Tap "I watered it". App remembers for next time. Done.
+Here's what needs water today. Tap "I watered it." The app remembers for next time. Done.
 
 **It checks the weather for you.**
 
-Rain today? No watering reminder for outdoor plants. Frost coming? Big orange alert: "BRING THEM INSIDE."
+Rain today? No watering reminder for outdoor plants. Frost coming? Big orange alert: "BRING THEM INSIDE.""
 
 **Background notifications.**
 
-You're busy. App knows. When it's watering day, you get a browser notification. Even if you're on YouTube.
+The app knows. When it's watering day, you get a browser notification.
 
 **Plant looks sad?**
 
-Yellow leaves? Wet soil? Pick what you see. App tells you what's wrong and what to do about it.
+Yellow leaves? Wet soil? Pick what you see. The app tells you what's wrong and what to do about it.
 
 ## What we used
 
