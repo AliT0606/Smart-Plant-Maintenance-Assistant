@@ -1,68 +1,60 @@
 # 🌿 Smart Plant Maintenance Assistant
-### *Your plants won't die anymore. We promise.*
 
-> Ever killed a plant and felt genuinely bad about it? Yeah, us too. That's why we built this.
+> We killed a lot of plants making this. Hopefully you won't.
 
-## What is this?
+## So what's this thing?
 
-A **web app** that keeps your plants alive — automatically.
+Web app. Tells you when to water your plants. Checks the weather so you don't water before rain. Warns you about frost. Diagnoses sick plants.
 
-You tell it what plants you have. It figures out when to water them, checks the weather so you don't overwater before rain, warns you when frost is coming, and diagnoses problems when leaves start looking weird.
+Runs in the background too. Close the tab, you'll still get notifications.
 
-**And it runs in the background.** Even when you close the tab, it can send you notifications when it's time to water.
+## What does it actually do?
 
-## What it can do
+**Add a plant. That's it.**
 
-**Add a plant like you're texting a friend**
+Type "Monstera". App goes and finds how much water it needs. You don't need to google anything.
 
-Type "Monstera" — the app fetches care requirements from a plant database. How often to water, how much light it needs. You just name it, it does the rest.
+**Open it in the morning.**
 
-**Wake up, check your dashboard, water**
+Here's what needs water today. Tap "I watered it". App remembers for next time. Done.
 
-Open the app. See exactly which plants need water today. Hit *"💧 I watered it"* and you're done. The app recalculates the next watering date automatically.
+**It checks the weather for you.**
 
-**It watches the weather so you don't have to**
+Rain today? No watering reminder for outdoor plants. Frost coming? Big orange alert: "BRING THEM INSIDE."
 
-Rain coming? The app quietly skips outdoor watering reminders. Frost warning? Big orange card: *"BRING YOUR PLANTS INSIDE."* It checks the live forecast automatically.
+**Background notifications.**
 
-**Background notifications — because you have a life**
+You're busy. App knows. When it's watering day, you get a browser notification. Even if you're on YouTube.
 
-You don't need to keep the app open. When it's watering day, you get a browser notification. Even if you're on another tab. Even if your computer is just sitting there.
+**Plant looks sad?**
 
-**Diagnose problems before they become disasters**
+Yellow leaves? Wet soil? Pick what you see. App tells you what's wrong and what to do about it.
 
-Yellow leaves? Soggy soil? Pick the symptoms you're seeing. The app walks you through what's probably wrong and exactly what to do — step by step.
+## What we used
 
-## Tech stack
-
-| What | Technology |
+| Thing | What |
 |---|---|
 | Frontend | React |
 | Backend | Flask |
 | Database | SQLite |
-| Background Jobs | Celery + Redis |
 | Notifications | Web Push API |
-| Plant Data | Perenual API |
-| Weather | OpenWeatherMap API |
-| Language | Python 3.10+ |
+| Plant data | Perenual API |
+| Weather | OpenWeatherMap |
 
+Python 3.10+. Nothing fancy.
 
-## Who built this
+## Who made this
 
-| Person | What they owned |
+| Name | Did what |
 |---|---|
-| **Ali Türk** | Master/Front/Back |
-| **Hüseyin Altıparmak** | Database + API |
-| **Rasim Akıncı** | Backend |
-| **Mustafa Ünal Öztürk** | Backend |
-| **Fikriye Akgün** | Frontend |
+| Ali Türk | Master and a bit of everything |
+| Hüseyin Altıparmak | Database + APIs |
+| Rasim Akıncı | Backend stuff |
+| M. Ünal Öztürk | Backend stuff |
+| Fikriye Akgün | Frontend |
 
-## License
+## What's next maybe
 
-MIT — do whatever you want with it.
+- Telegram bot so you get texts
 
----
 
-*Made with 🌱, ☕, and a shameful number of dead plants as inspiration.*
-
-**One last thing** — If you still kill a plant while using this app, that's on you. We're helpers, not miracle workers.
