@@ -34,9 +34,9 @@ Yellow leaves? Wet soil? Pick what you see. The app tells you what's wrong and w
 
 | Thing | What |
 |---|---|
-| Frontend | React |
-| Backend | Flask |
-| Database | SQLite |
+| Frontend | Streamlit |
+| Backend | Python |
+| Database | MS SQL Server |
 | Notifications | Web Push API |
 | Plant data | Perenual API |
 | Weather | OpenWeatherMap |
@@ -53,8 +53,6 @@ Python 3.10+. Nothing fancy.
 | M. Ünal Öztürk | Backend stuff |
 | Fikriye Akgün | Frontend |
 
-## What's next maybe
 
-- Telegram bot so you get texts
 
 
