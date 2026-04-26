@@ -37,7 +37,6 @@ Yellow leaves? Wet soil? Pick what you see. The app tells you what's wrong and w
 | Frontend | Streamlit |
 | Backend | Python |
 | Database | MS SQL Server |
-| Notifications | Web Push API |
 | Plant data | Perenual API |
 | Weather | OpenWeatherMap |
 
