@@ -1,5 +1,6 @@
 import streamlit as st
 import datetime
+from database_handler import akilli_bitki_ekle, tum_bitkileri_getir
 
 if not st.session_state.get("logged_in"):
     st.warning("Lütfen önce giriş yapın.")
@@ -16,7 +17,7 @@ tab_liste, tab_ekle = st.tabs(["🌿 Koleksiyonum", "➕ Yeni Bitki Ekle"])
 
 # ── TAB 1: Liste ──
 with tab_liste:
-    ara = st.text_input("🔍 Bitki Ara", placeholder="İsim veya tür yazın...")
+    ara    = st.text_input("🔍 Bitki Ara", placeholder="İsim veya tür yazın...")
     plants = st.session_state.plants
     if ara:
         plants = [p for p in plants if ara.lower() in p["ad"].lower() or ara.lower() in p["tur"].lower()]
@@ -32,57 +33,60 @@ with tab_liste:
                     st.subheader(p["ad"])
                     st.caption(f"*{p['tur']}*")
                     c1, c2, c3 = st.columns(3)
-                    c1.metric("Konum",   p["konum"])
-                    c2.metric("Sulama",  f"{p['sulama_periyodu']}g/bir")
-                    c3.metric("Sağlık",  f"%{p['saglik']}")
+                    c1.metric("Konum",  p["konum"])
+                    c2.metric("Sulama", f"{p['sulama_periyodu']}g/bir")
+                    c3.metric("Sağlık", f"%{p['saglik']}")
                     st.write(f"☀️ {p['isik']}  —  {saglik_label}")
 
-                    d1, d2 = st.columns(2)
-                    with d1:
-                        if st.button("🗑️ Sil", key=f"sil_{i}", use_container_width=True):
-                            st.session_state.plants.pop(i)
-                            st.rerun()
-                    with d2:
-                        if st.button("✏️ Düzenle", key=f"duzenle_{i}", use_container_width=True):
-                            st.session_state[f"edit_{i}"] = not st.session_state.get(f"edit_{i}", False)
-
-                if st.session_state.get(f"edit_{i}"):
-                    with st.expander("Düzenleme", expanded=True):
-                        yeni_ad  = st.text_input("Ad",    value=p["ad"],    key=f"ead_{i}")
-                        yeni_kon = st.selectbox("Konum", ["Salon","Mutfak","Yatak Odası","Ofis","Balkon","Banyo"], key=f"ekon_{i}")
-                        yeni_sag = st.slider("Sağlık %", 0, 100, p["saglik"], key=f"esag_{i}")
-                        if st.button("Kaydet", key=f"kaydet_{i}"):
-                            st.session_state.plants[i]["ad"]     = yeni_ad
-                            st.session_state.plants[i]["konum"]  = yeni_kon
-                            st.session_state.plants[i]["saglik"] = yeni_sag
-                            st.session_state[f"edit_{i}"]        = False
-                            st.rerun()
+                    # NOT: Silme işlemi için database_handler'a sil fonksiyonu eklenirse buraya gelecek
+                    # Şimdilik sadece session_state'ten siliyoruz
+                    if st.button("🗑️ Sil", key=f"sil_{i}", use_container_width=True):
+                        st.session_state.plants.pop(i)
+                        st.rerun()
 
 # ── TAB 2: Ekle ──
 with tab_ekle:
     st.subheader("🌱 Yeni Bitki Ekle")
+    st.caption("Bitki türü girilince Perenual API'den sulama ve ışık bilgisi otomatik gelir.")
+
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1:
-            yeni_ad      = st.text_input("Bitki Adı",       placeholder="Barış Çiçeği")
-            yeni_tur     = st.text_input("Tür (Latince)",   placeholder="Spathiphyllum")
-            yeni_konum   = st.selectbox("Konum", ["Salon","Mutfak","Yatak Odası","Ofis","Balkon","Banyo"])
+            yeni_ad    = st.text_input("Bitki Adı",     placeholder="Barış Çiçeği")
+            yeni_tur   = st.text_input("Tür (Latince)", placeholder="Spathiphyllum")
+            yeni_konum = st.selectbox("Konum", ["Salon","Mutfak","Yatak Odası","Ofis","Balkon","Banyo"])
         with c2:
-            yeni_isik    = st.selectbox("Işık İhtiyacı",    ["Tam Güneş","Dolaylı Güneş","Parlak Dolaylı","Az Işık"])
-            yeni_periyot = st.number_input("Sulama Periyodu (gün)", min_value=1, max_value=30, value=7)
-            yeni_saglik  = st.slider("Başlangıç Sağlığı %", 0, 100, 80)
+            yeni_tarih = st.date_input("Ekim Tarihi", datetime.date.today())
 
         if st.button("🌿 Koleksiyona Ekle", use_container_width=True):
             if yeni_ad and yeni_tur:
-                st.session_state.plants.append({
-                    "ad":             yeni_ad,
-                    "tur":            yeni_tur,
-                    "konum":          yeni_konum,
-                    "sulama_periyodu":yeni_periyot,
-                    "saglik":         yeni_saglik,
-                    "isik":           yeni_isik,
-                })
-                st.success(f"✅ {yeni_ad} koleksiyona eklendi!")
+                with st.spinner("Perenual API'den bitki bilgisi alınıyor..."):
+                    # akilli_bitki_ekle → database_handler.py
+                    # İçinde bitki_bilgisi_getir(tur) çağırıp DB'ye yazar
+                    akilli_bitki_ekle(
+                        ad=yeni_ad,
+                        tur=yeni_tur,
+                        ekim_tarihi=str(yeni_tarih),
+                        konum=yeni_konum
+                    )
+
+                # DB'den güncel listeyi çek ve session'a yükle
+                rows = tum_bitkileri_getir()
+                if rows:
+                    st.session_state.plants = [
+                        {
+                            "id":             row[0],
+                            "ad":             row[1],
+                            "tur":            row[2],
+                            "ekim_tarihi":    row[3],
+                            "sulama_periyodu":row[4],
+                            "konum":          row[5],
+                            "saglik":         80,
+                            "isik":           "Bilinmiyor",
+                        }
+                        for row in rows
+                    ]
+                st.success(f"✅ **{yeni_ad}** Perenual API üzerinden bilgileri alınarak veritabanına eklendi!")
                 st.rerun()
             else:
                 st.error("Lütfen bitki adı ve türünü girin.")
