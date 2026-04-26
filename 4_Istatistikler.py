@@ -3,12 +3,11 @@ import pandas as pd
 import datetime
 import random
 from collections import Counter
+from database_handler import tum_bitkileri_getir
 
 if not st.session_state.get("logged_in"):
     st.warning("Lütfen önce giriş yapın.")
     st.stop()
-
-plants = st.session_state.get("plants", [])
 
 # ─────────────────────────────────────────
 # İSTATİSTİKLER
@@ -16,6 +15,27 @@ plants = st.session_state.get("plants", [])
 st.title("📊 İstatistikler")
 st.caption("Bahçenizin genel sağlık ve bakım analizi.")
 st.divider()
+
+# DB'den güncel listeyi çek
+if st.button("🔄 Veritabanından Yenile"):
+    rows = tum_bitkileri_getir()
+    if rows:
+        st.session_state.plants = [
+            {
+                "id":             row[0],
+                "ad":             row[1],
+                "tur":            row[2],
+                "ekim_tarihi":    row[3],
+                "sulama_periyodu":row[4],
+                "konum":          row[5],
+                "saglik":         80,
+                "isik":           "Bilinmiyor",
+            }
+            for row in rows
+        ]
+    st.rerun()
+
+plants = st.session_state.get("plants", [])
 
 if not plants:
     st.info("İstatistik görmek için önce Bitki Kütüphanesi'nden bitki ekleyin.")
@@ -27,10 +47,10 @@ en_kotu    = min(plants, key=lambda p: p["saglik"])
 
 # ── Üst metrikler ──
 m1, m2, m3, m4 = st.columns(4)
-m1.metric("Ort. Sağlık",      f"%{avg_saglik}")
-m2.metric("En Sağlıklı",      en_iyi["ad"],  f"%{en_iyi['saglik']}")
-m3.metric("Dikkat Gereken",   en_kotu["ad"], f"%{en_kotu['saglik']}")
-m4.metric("Toplam Bitki",     len(plants))
+m1.metric("Ort. Sağlık",    f"%{avg_saglik}")
+m2.metric("En Sağlıklı",    en_iyi["ad"],  f"%{en_iyi['saglik']}")
+m3.metric("Dikkat Gereken", en_kotu["ad"], f"%{en_kotu['saglik']}")
+m4.metric("Toplam Bitki",   len(plants))
 
 st.divider()
 
@@ -52,14 +72,15 @@ col_sol, col_sag = st.columns(2)
 with col_sol:
     st.subheader("🏠 Konuma Göre Dağılım")
     konum_sayac = Counter(p["konum"] for p in plants)
-    df_konum = pd.DataFrame(konum_sayac.items(), columns=["Konum", "Bitki Sayısı"])
+    df_konum    = pd.DataFrame(konum_sayac.items(), columns=["Konum", "Bitki Sayısı"])
     st.bar_chart(df_konum.set_index("Konum"))
 
 with col_sag:
-    st.subheader("💧 Sulama Periyodu Dağılımı")
+    st.subheader("💧 Sulama Periyodu Dağılımı (DB)")
+    # sulama_periyodu DB'den gelen gerçek değer
     periyot_sayac = Counter(
-        "Az (>7g)" if p["sulama_periyodu"] > 7 else
-        "Orta (4-7g)" if p["sulama_periyodu"] >= 4 else
+        "Az (>7g)"   if p["sulama_periyodu"] > 7 else
+        "Orta (4-7g)"if p["sulama_periyodu"] >= 4 else
         "Sık (<4g)"
         for p in plants
     )
@@ -68,7 +89,7 @@ with col_sag:
 
 st.divider()
 
-# ── 30 Günlük trend ──
+# ── 30 Günlük trend (simüle — DB'de tarihsel veri olmadığı için) ──
 st.subheader("📈 Son 30 Gün Sağlık Trendi")
 random.seed(42)
 tarihler    = [datetime.date.today() - datetime.timedelta(days=i) for i in range(29, -1, -1)]
