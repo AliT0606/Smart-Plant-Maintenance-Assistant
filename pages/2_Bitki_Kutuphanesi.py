@@ -13,7 +13,7 @@ st.title("📚 Bitki Kütüphanesi")
 st.caption(f"Koleksiyonunuzda {len(st.session_state.plants)} bitki var.")
 st.divider()
 
-tab_liste, tab_ekle = st.tabs(["🌿 Koleksiyonum", "➕ Yeni Bitki Ekle"])
+tab_liste, tab_ekle, tab_notlar = st.tabs(["🌿 Koleksiyonum", "➕ Yeni Bitki Ekle", "📝 Notlar"])
 
 # ── TAB 1: Liste ──
 with tab_liste:
@@ -61,32 +61,89 @@ with tab_ekle:
         if st.button("🌿 Koleksiyona Ekle", use_container_width=True):
             if yeni_ad and yeni_tur:
                 with st.spinner("Perenual API'den bitki bilgisi alınıyor..."):
-                    # akilli_bitki_ekle → database_handler.py
-                    # İçinde bitki_bilgisi_getir(tur) çağırıp DB'ye yazar
-                    akilli_bitki_ekle(
-                        ad=yeni_ad,
-                        tur=yeni_tur,
-                        ekim_tarihi=str(yeni_tarih),
-                        konum=yeni_konum
-                    )
-
-                # DB'den güncel listeyi çek ve session'a yükle
-                rows = tum_bitkileri_getir()
-                if rows:
-                    st.session_state.plants = [
-                        {
-                            "id":             row[0],
-                            "ad":             row[1],
-                            "tur":            row[2],
-                            "ekim_tarihi":    row[3],
-                            "sulama_periyodu":row[4],
-                            "konum":          row[5],
+                    try:
+                        akilli_bitki_ekle(
+                            ad=yeni_ad,
+                            tur=yeni_tur,
+                            ekim_tarihi=str(yeni_tarih),
+                            konum=yeni_konum
+                        )
+                        # DB başarılıysa DB'den yükle
+                        rows = tum_bitkileri_getir()
+                        if rows:
+                            st.session_state.plants = [
+                                {
+                                    "id":             row[0],
+                                    "ad":             row[1],
+                                    "tur":            row[2],
+                                    "ekim_tarihi":    row[3],
+                                    "sulama_periyodu":row[4],
+                                    "konum":          row[5],
+                                    "saglik":         80,
+                                    "isik":           "Bilinmiyor",
+                                }
+                                for row in rows
+                            ]
+                    except Exception:
+                        # DB yoksa doğrudan session_state'e ekle
+                        yeni_id = max((p["id"] for p in st.session_state.plants), default=0) + 1
+                        st.session_state.plants.append({
+                            "id":             yeni_id,
+                            "ad":             yeni_ad,
+                            "tur":            yeni_tur,
+                            "ekim_tarihi":    str(yeni_tarih),
+                            "sulama_periyodu": 7,
+                            "konum":          yeni_konum,
                             "saglik":         80,
                             "isik":           "Bilinmiyor",
-                        }
-                        for row in rows
-                    ]
-                st.success(f"✅ **{yeni_ad}** Perenual API üzerinden bilgileri alınarak veritabanına eklendi!")
+                        })
+                st.success(f"✅ **{yeni_ad}** koleksiyona eklendi!")
                 st.rerun()
             else:
                 st.error("Lütfen bitki adı ve türünü girin.")
+
+# ── TAB 3: Notlar ──
+with tab_notlar:
+    st.subheader("📝 Bitki Notları")
+
+    if not st.session_state.plants:
+        st.info("Önce bir bitki ekleyin.")
+    else:
+        secilen_bitki = st.selectbox(
+            "Bitki seçin",
+            [p["ad"] for p in st.session_state.plants],
+            key="not_bitki_sec"
+        )
+        secilen_p = next(p for p in st.session_state.plants if p["ad"] == secilen_bitki)
+
+        # Notları session_state'te tut (dict: bitki_id -> [notlar])
+        if "notlar" not in st.session_state:
+            st.session_state.notlar = {}
+
+        bitki_notlar = st.session_state.notlar.get(secilen_p["id"], [])
+
+        # Mevcut notları göster
+        if bitki_notlar:
+            for n in reversed(bitki_notlar):
+                with st.container(border=True):
+                    st.caption(n["tarih"])
+                    st.write(n["icerik"])
+        else:
+            st.info("Bu bitki için henüz not yok.")
+
+        st.divider()
+
+        # Yeni not ekle
+        yeni_not = st.text_area("Yeni not", placeholder="Yapraklarda sararma görüldü...")
+        if st.button("💾 Notu Kaydet", use_container_width=True):
+            if yeni_not.strip():
+                if secilen_p["id"] not in st.session_state.notlar:
+                    st.session_state.notlar[secilen_p["id"]] = []
+                st.session_state.notlar[secilen_p["id"]].append({
+                    "icerik": yeni_not.strip(),
+                    "tarih":  str(datetime.date.today())
+                })
+                st.success("Not kaydedildi!")
+                st.rerun()
+            else:
+                st.error("Not boş olamaz.")

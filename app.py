@@ -72,7 +72,7 @@ except Exception:
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# Mock bitki verisi — DB bağlantısı yokken kullanılır
+# Mock bitki verisi — yalnızca kullanıcının hiç bitkisi yoksa ilk açılışta kullanılır
 MOCK_PLANTS = [
     {"id": 1, "ad": "Barış Çiçeği",  "tur": "Spathiphyllum",      "ekim_tarihi": "2024-01-15", "sulama_periyodu": 2,  "konum": "Salon",  "saglik": 85, "isik": "Dolaylı Güneş"},
     {"id": 2, "ad": "Sukulent",       "tur": "Echeveria",           "ekim_tarihi": "2024-02-20", "sulama_periyodu": 14, "konum": "Mutfak", "saglik": 95, "isik": "Tam Güneş"},
@@ -81,8 +81,9 @@ MOCK_PLANTS = [
     {"id": 5, "ad": "Pothos",         "tur": "Epipremnum aureum",   "ekim_tarihi": "2024-05-01", "sulama_periyodu": 7,  "konum": "Banyo",  "saglik": 88, "isik": "Az Işık"},
 ]
 
-# Bitkileri yükle — DB varsa DB'den, yoksa mock'tan
+# plants session'da yoksa yükle (sayfa yenilemede tekrar yükleme yapma)
 if "plants" not in st.session_state:
+    loaded = False
     if DB_AKTIF:
         try:
             rows = tum_bitkileri_getir()
@@ -100,11 +101,11 @@ if "plants" not in st.session_state:
                     }
                     for row in rows
                 ]
-            else:
-                st.session_state.plants = MOCK_PLANTS
+                loaded = True
         except Exception:
-            st.session_state.plants = MOCK_PLANTS
-    else:
+            pass
+    # DB yoksa veya boşsa: mock sadece ilk açılışta
+    if not loaded:
         st.session_state.plants = MOCK_PLANTS
 
 if "db_aktif" not in st.session_state:
