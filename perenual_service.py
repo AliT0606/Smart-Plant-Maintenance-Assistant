@@ -1,6 +1,6 @@
 import requests
 
-API_KEY = "Ssk-0zds69cc2f32ec01016010"  # perenual.com'dan alınan key
+API_KEY = "sk-2dF669f10b238a64c16825"  # perenual.com'dan alınan key
 BASE    = "https://perenual.com/api"
 
 # ─────────────────────────────────────────
@@ -9,7 +9,7 @@ BASE    = "https://perenual.com/api"
 def bitki_bilgisi_getir(bitki_turu):
     """Tür ismine göre Perenual API'den sulama ve ışık bilgisi çeker.
     Döndürür: {orijinal_sulama, periyot_gun, isik} veya None"""
-    url = f"{BASE}/species-list?key={API_KEY}&q={bitki_turu}"
+    url = f"{BASE}/species-list?key={"API_KEY"}&q={bitki_turu}"
 
     try:
         response = requests.get(url, timeout=5)
