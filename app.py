@@ -58,9 +58,13 @@ section[data-testid="stSidebar"] {
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────
-# BACKEND İMPORT
+# BACKEND İMPORT — hata olursa mock kullan
 # ─────────────────────────────────────────
-from database_handler import tum_bitkileri_getir
+try:
+    from database_handler import tum_bitkileri_getir
+    DB_AKTIF = True
+except Exception:
+    DB_AKTIF = False
 
 # ─────────────────────────────────────────
 # SESSION STATE
@@ -68,27 +72,43 @@ from database_handler import tum_bitkileri_getir
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# DB'den bitkileri yükle (uygulama ilk açıldığında bir kez)
+# Mock bitki verisi — DB bağlantısı yokken kullanılır
+MOCK_PLANTS = [
+    {"id": 1, "ad": "Barış Çiçeği",  "tur": "Spathiphyllum",      "ekim_tarihi": "2024-01-15", "sulama_periyodu": 2,  "konum": "Salon",  "saglik": 85, "isik": "Dolaylı Güneş"},
+    {"id": 2, "ad": "Sukulent",       "tur": "Echeveria",           "ekim_tarihi": "2024-02-20", "sulama_periyodu": 14, "konum": "Mutfak", "saglik": 95, "isik": "Tam Güneş"},
+    {"id": 3, "ad": "Orkide",         "tur": "Phalaenopsis",        "ekim_tarihi": "2024-03-10", "sulama_periyodu": 7,  "konum": "Yatak",  "saglik": 70, "isik": "Dolaylı Güneş"},
+    {"id": 4, "ad": "Para Çiçeği",    "tur": "Pilea peperomioides", "ekim_tarihi": "2024-04-05", "sulama_periyodu": 5,  "konum": "Ofis",   "saglik": 90, "isik": "Parlak Dolaylı"},
+    {"id": 5, "ad": "Pothos",         "tur": "Epipremnum aureum",   "ekim_tarihi": "2024-05-01", "sulama_periyodu": 7,  "konum": "Banyo",  "saglik": 88, "isik": "Az Işık"},
+]
+
+# Bitkileri yükle — DB varsa DB'den, yoksa mock'tan
 if "plants" not in st.session_state:
-    rows = tum_bitkileri_getir()
-    if rows:
-        # tum_bitkileri_getir() → SELECT * FROM Bitkiler
-        # Sütun sırası: Id, Ad, Tur, EkimTarihi, SulamaPeriyodu, Konum
-        st.session_state.plants = [
-            {
-                "id":             row[0],
-                "ad":             row[1],
-                "tur":            row[2],
-                "ekim_tarihi":    row[3],
-                "sulama_periyodu":row[4],
-                "konum":          row[5],
-                "saglik":         80,    # DB'de sağlık sütunu yoksa varsayılan
-                "isik":           "Bilinmiyor",
-            }
-            for row in rows
-        ]
+    if DB_AKTIF:
+        try:
+            rows = tum_bitkileri_getir()
+            if rows:
+                st.session_state.plants = [
+                    {
+                        "id":             row[0],
+                        "ad":             row[1],
+                        "tur":            row[2],
+                        "ekim_tarihi":    row[3],
+                        "sulama_periyodu":row[4],
+                        "konum":          row[5],
+                        "saglik":         80,
+                        "isik":           "Bilinmiyor",
+                    }
+                    for row in rows
+                ]
+            else:
+                st.session_state.plants = MOCK_PLANTS
+        except Exception:
+            st.session_state.plants = MOCK_PLANTS
     else:
-        st.session_state.plants = []
+        st.session_state.plants = MOCK_PLANTS
+
+if "db_aktif" not in st.session_state:
+    st.session_state.db_aktif = DB_AKTIF
 
 # ─────────────────────────────────────────
 # GİRİŞ PANELİ
@@ -104,13 +124,13 @@ if not st.session_state.logged_in:
         email    = st.text_input("E-posta",  placeholder="ornek@mail.com")
         password = st.text_input("Şifre",    placeholder="••••••••", type="password")
         if st.button("Giriş Yap", use_container_width=True):
-            # TODO: DB'de kullanıcı tablosu oluşturulunca buraya gerçek auth gelecek
             if "@" in email:
                 st.session_state.logged_in  = True
                 st.session_state.user_email = email
                 st.rerun()
             else:
                 st.error("Geçerli bir e-posta girin.")
+        st.caption("Demo: herhangi @ içeren e-posta ile giriş yapabilirsiniz.")
     st.stop()
 
 # ─────────────────────────────────────────
@@ -119,6 +139,9 @@ if not st.session_state.logged_in:
 with st.sidebar:
     st.title("🌿 Killi Bahçe")
     st.caption(f"{len(st.session_state.plants)} Sağlıklı Bitki")
+    st.divider()
+    if not st.session_state.db_aktif:
+        st.warning("⚠️ DB bağlantısı yok\nMock veri kullanılıyor.")
     st.divider()
     if st.button("🚪 Çıkış Yap"):
         st.session_state.logged_in = False
