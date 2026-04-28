@@ -1,6 +1,7 @@
 import streamlit as st
 import datetime
-from database_handler import akilli_bitki_ekle, tum_bitkileri_getir
+from database_handler import akilli_bitki_ekle, tum_bitkileri_getir, bitki_sil
+from perenual_service import bitki_bilgisi_getir
 
 if not st.session_state.get("logged_in"):
     st.warning("Lütfen önce giriş yapın.")
@@ -38,10 +39,15 @@ with tab_liste:
                     c3.metric("Sağlık", f"%{p['saglik']}")
                     st.write(f"☀️ {p['isik']}  —  {saglik_label}")
 
-                    # NOT: Silme işlemi için database_handler'a sil fonksiyonu eklenirse buraya gelecek
-                    # Şimdilik sadece session_state'ten siliyoruz
-                    if st.button("🗑️ Sil", key=f"sil_{i}", use_container_width=True):
-                        st.session_state.plants.pop(i)
+                    
+                    if st.button("🗑️ Sil", key=f"sil_db_{p['id']}", use_container_width=True):
+                        # 1. Veritabanından sil
+                        try:
+                            bitki_sil(p["id"])
+                        except Exception:
+                            pass
+                        # 2. Arayüzden anında kaldır
+                        st.session_state.plants = [b for b in st.session_state.plants if b["id"] != p["id"]]
                         st.rerun()
 
 # ── TAB 2: Ekle ──
@@ -61,42 +67,64 @@ with tab_ekle:
         if st.button("🌿 Koleksiyona Ekle", use_container_width=True):
             if yeni_ad and yeni_tur:
                 with st.spinner("Perenual API'den bitki bilgisi alınıyor..."):
+                    # 1. API'den veriyi anlık olarak çekiyoruz
+                    api_bilgileri = bitki_bilgisi_getir(yeni_tur)
+                    
+                    # Varsayılan değerler
+                    sulama_gun = 7
+                    isik_bilgisi = "Bilinmiyor"
+                    
+                    # API cevap verdiyse gerçek değerleri al
+                    if api_bilgileri:
+                        sulama_gun = api_bilgileri.get("periyot_gun", 7)
+                        isik_bilgisi = api_bilgileri.get("isik", "Bilinmiyor")
+
                     try:
+                        # 2. DB'ye ekleme işlemi
                         akilli_bitki_ekle(
                             ad=yeni_ad,
                             tur=yeni_tur,
                             ekim_tarihi=str(yeni_tarih),
                             konum=yeni_konum
                         )
-                        # DB başarılıysa DB'den yükle
+                        # DB başarılıysa verileri çek
                         rows = tum_bitkileri_getir()
                         if rows:
-                            st.session_state.plants = [
-                                {
-                                    "id":             row[0],
-                                    "ad":             row[1],
+                            guncel_bitkiler = []
+                            for row in rows:
+                                bitki_id = row[0]
+                                ad = row[1]
+                                
+                                # DB'de isik sütunu olmadığı için, az önce eklediğimiz bitkiyse API verisini kullan, eskiyse Bilinmiyor yap
+                                guncel_isik = isik_bilgisi if ad == yeni_ad else "Bilinmiyor"
+                                guncel_sulama = sulama_gun if ad == yeni_ad else row[4]
+                                
+                                guncel_bitkiler.append({
+                                    "id":             bitki_id,
+                                    "ad":             ad,
                                     "tur":            row[2],
                                     "ekim_tarihi":    row[3],
-                                    "sulama_periyodu":row[4],
+                                    "sulama_periyodu":guncel_sulama,
                                     "konum":          row[5],
                                     "saglik":         80,
-                                    "isik":           "Bilinmiyor",
-                                }
-                                for row in rows
-                            ]
+                                    "isik":           guncel_isik,
+                                })
+                            st.session_state.plants = guncel_bitkiler
+
                     except Exception:
-                        # DB yoksa doğrudan session_state'e ekle
+                        # DB çalışmıyorsa doğrudan session_state'e ekle (Mock Modu)
                         yeni_id = max((p["id"] for p in st.session_state.plants), default=0) + 1
                         st.session_state.plants.append({
                             "id":             yeni_id,
                             "ad":             yeni_ad,
                             "tur":            yeni_tur,
                             "ekim_tarihi":    str(yeni_tarih),
-                            "sulama_periyodu": 7,
+                            "sulama_periyodu": sulama_gun,
                             "konum":          yeni_konum,
                             "saglik":         80,
-                            "isik":           "Bilinmiyor",
+                            "isik":           isik_bilgisi,
                         })
+                        
                 st.success(f"✅ **{yeni_ad}** koleksiyona eklendi!")
                 st.rerun()
             else:

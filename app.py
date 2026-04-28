@@ -4,7 +4,7 @@ import streamlit as st
 # SAYFA AYARLARI
 # ─────────────────────────────────────────
 st.set_page_config(
-    page_title="Killi Bahçe",
+    page_title="Bakım Asistanı",
     page_icon="🌿",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -85,24 +85,36 @@ MOCK_PLANTS = [
 if "plants" not in st.session_state:
     loaded = False
     if DB_AKTIF:
+        from perenual_service import bitki_bilgisi_getir
         try:
             rows = tum_bitkileri_getir()
             if rows:
-                st.session_state.plants = [
-                    {
+                yeni_bitkiler = []
+                for row in rows:
+                    tur = row[2]
+                    db_periyot = row[4]
+                    
+                    # Işık verisi veritabanında olmadığı için anlık olarak Mock sistemden alıyoruz
+                    api_veri = bitki_bilgisi_getir(tur)
+                    isik_verisi = api_veri["isik"] if api_veri else "Bilinmiyor"
+                    
+                    # Eğer daha önceden veritabanına hatalı kaydedilmiş 7 günlük eski bir bitkiyse, onu da düzeltiyoruz
+                    gercek_periyot = api_veri["periyot_gun"] if api_veri and db_periyot == 7 else db_periyot
+
+                    yeni_bitkiler.append({
                         "id":             row[0],
                         "ad":             row[1],
-                        "tur":            row[2],
+                        "tur":            tur,
                         "ekim_tarihi":    row[3],
-                        "sulama_periyodu":row[4],
+                        "sulama_periyodu":gercek_periyot,
                         "konum":          row[5],
                         "saglik":         80,
-                        "isik":           "Bilinmiyor",
-                    }
-                    for row in rows
-                ]
+                        "isik":           isik_verisi,
+                    })
+                st.session_state.plants = yeni_bitkiler
                 loaded = True
-        except Exception:
+        except Exception as e:
+            print("DB çekme hatası:", e)
             pass
     # DB yoksa veya boşsa: mock sadece ilk açılışta
     if not loaded:
@@ -119,7 +131,7 @@ if not st.session_state.logged_in:
     with col:
         st.write("")
         st.write("")
-        st.title("🌿 Killi Bahçe")
+        st.title("🌿 Bakım Asistanı")
         st.caption("Akıllı Bitki Bakım Asistanınız")
         st.divider()
         email    = st.text_input("E-posta",  placeholder="ornek@mail.com")
@@ -138,7 +150,7 @@ if not st.session_state.logged_in:
 # SIDEBAR
 # ─────────────────────────────────────────
 with st.sidebar:
-    st.title("🌿 Killi Bahçe")
+    st.title("🌿 Bakım Asistanı ")
     st.caption(f"{len(st.session_state.plants)} Sağlıklı Bitki")
     st.divider()
     if not st.session_state.db_aktif:
