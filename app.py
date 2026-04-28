@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────
-# GLOBAL TEMA  (sadece renk + font, HTML yok)
+# GLOBAL TEMA
 # ─────────────────────────────────────────
 st.markdown("""
 <style>
@@ -58,20 +58,37 @@ section[data-testid="stSidebar"] {
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────
+# BACKEND İMPORT
+# ─────────────────────────────────────────
+from database_handler import tum_bitkileri_getir
+
+# ─────────────────────────────────────────
 # SESSION STATE
 # ─────────────────────────────────────────
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# Mock bitki verisi (backend olmadan test için)
+# DB'den bitkileri yükle (uygulama ilk açıldığında bir kez)
 if "plants" not in st.session_state:
-    st.session_state.plants = [
-        {"ad": "Barış Çiçeği",  "tur": "Spathiphyllum",       "konum": "Salon",   "sulama_periyodu": 2,  "saglik": 85, "isik": "Dolaylı Güneş"},
-        {"ad": "Sukulent",      "tur": "Echeveria",            "konum": "Mutfak",  "sulama_periyodu": 14, "saglik": 95, "isik": "Tam Güneş"},
-        {"ad": "Orkide",        "tur": "Phalaenopsis",         "konum": "Yatak",   "sulama_periyodu": 7,  "saglik": 70, "isik": "Dolaylı Güneş"},
-        {"ad": "Para Çiçeği",   "tur": "Pilea peperomioides",  "konum": "Ofis",    "sulama_periyodu": 5,  "saglik": 90, "isik": "Parlak Dolaylı"},
-        {"ad": "Pothos",        "tur": "Epipremnum aureum",    "konum": "Banyo",   "sulama_periyodu": 7,  "saglik": 88, "isik": "Az Işık"},
-    ]
+    rows = tum_bitkileri_getir()
+    if rows:
+        # tum_bitkileri_getir() → SELECT * FROM Bitkiler
+        # Sütun sırası: Id, Ad, Tur, EkimTarihi, SulamaPeriyodu, Konum
+        st.session_state.plants = [
+            {
+                "id":             row[0],
+                "ad":             row[1],
+                "tur":            row[2],
+                "ekim_tarihi":    row[3],
+                "sulama_periyodu":row[4],
+                "konum":          row[5],
+                "saglik":         80,    # DB'de sağlık sütunu yoksa varsayılan
+                "isik":           "Bilinmiyor",
+            }
+            for row in rows
+        ]
+    else:
+        st.session_state.plants = []
 
 # ─────────────────────────────────────────
 # GİRİŞ PANELİ
@@ -84,20 +101,20 @@ if not st.session_state.logged_in:
         st.title("🌿 Killi Bahçe")
         st.caption("Akıllı Bitki Bakım Asistanınız")
         st.divider()
-        email    = st.text_input("E-posta", placeholder="ornek@mail.com")
-        password = st.text_input("Şifre",   placeholder="••••••••", type="password")
+        email    = st.text_input("E-posta",  placeholder="ornek@mail.com")
+        password = st.text_input("Şifre",    placeholder="••••••••", type="password")
         if st.button("Giriş Yap", use_container_width=True):
+            # TODO: DB'de kullanıcı tablosu oluşturulunca buraya gerçek auth gelecek
             if "@" in email:
-                st.session_state.logged_in = True
+                st.session_state.logged_in  = True
                 st.session_state.user_email = email
                 st.rerun()
             else:
                 st.error("Geçerli bir e-posta girin.")
-        st.caption("Demo: herhangi @ içeren e-posta ile giriş yapabilirsiniz.")
     st.stop()
 
 # ─────────────────────────────────────────
-# SIDEBAR — çıkış butonu
+# SIDEBAR
 # ─────────────────────────────────────────
 with st.sidebar:
     st.title("🌿 Killi Bahçe")
@@ -107,5 +124,4 @@ with st.sidebar:
         st.session_state.logged_in = False
         st.rerun()
 
-# Ana sayfa yönlendirme mesajı (pages/ otomatik çalışır)
 st.info("👈 Sol menüden bir sayfa seçin.")
