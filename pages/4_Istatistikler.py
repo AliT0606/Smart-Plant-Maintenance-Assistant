@@ -3,11 +3,17 @@ import pandas as pd
 import datetime
 import random
 from collections import Counter
-from database_handler import tum_bitkileri_getir
 
+# ─────────────────────────────────────────
+# LOGIN KONTROLÜ — düzeltildi
+# ─────────────────────────────────────────
 if not st.session_state.get("logged_in"):
-    st.warning("Lütfen önce giriş yapın.")
-    st.stop()
+    st.switch_page("app.py")
+
+# ─────────────────────────────────────────
+# BACKEND İMPORT — DB yoksa sessizce geç
+# ─────────────────────────────────────────
+DB_AKTIF = st.session_state.get("db_aktif", False)
 
 # ─────────────────────────────────────────
 # İSTATİSTİKLER
@@ -16,24 +22,29 @@ st.title("📊 İstatistikler")
 st.caption("Bahçenizin genel sağlık ve bakım analizi.")
 st.divider()
 
-# DB'den güncel listeyi çek
-if st.button("🔄 Veritabanından Yenile"):
-    rows = tum_bitkileri_getir()
-    if rows:
-        st.session_state.plants = [
-            {
-                "id":             row[0],
-                "ad":             row[1],
-                "tur":            row[2],
-                "ekim_tarihi":    row[3],
-                "sulama_periyodu":row[4],
-                "konum":          row[5],
-                "saglik":         80,
-                "isik":           "Bilinmiyor",
-            }
-            for row in rows
-        ]
-    st.rerun()
+# Yenile butonu — sadece DB aktifse anlamlı
+if DB_AKTIF:
+    if st.button("🔄 Veritabanından Yenile"):
+        try:
+            from database_handler import tum_bitkileri_getir
+            rows = tum_bitkileri_getir()
+            if rows:
+                st.session_state.plants = [
+                    {
+                        "id":             row[0],
+                        "ad":             row[1],
+                        "tur":            row[2],
+                        "ekim_tarihi":    row[3],
+                        "sulama_periyodu":row[4],
+                        "konum":          row[5],
+                        "saglik":         80,
+                        "isik":           "Bilinmiyor",
+                    }
+                    for row in rows
+                ]
+            st.rerun()
+        except Exception as e:
+            st.error(f"DB hatası: {e}")
 
 plants = st.session_state.get("plants", [])
 
@@ -76,11 +87,10 @@ with col_sol:
     st.bar_chart(df_konum.set_index("Konum"))
 
 with col_sag:
-    st.subheader("💧 Sulama Periyodu Dağılımı (DB)")
-    # sulama_periyodu DB'den gelen gerçek değer
+    st.subheader("💧 Sulama Periyodu Dağılımı")
     periyot_sayac = Counter(
-        "Az (>7g)"   if p["sulama_periyodu"] > 7 else
-        "Orta (4-7g)"if p["sulama_periyodu"] >= 4 else
+        "Az (>7g)"    if p["sulama_periyodu"] > 7  else
+        "Orta (4-7g)" if p["sulama_periyodu"] >= 4 else
         "Sık (<4g)"
         for p in plants
     )
@@ -89,7 +99,7 @@ with col_sag:
 
 st.divider()
 
-# ── 30 Günlük trend (simüle — DB'de tarihsel veri olmadığı için) ──
+# ── 30 Günlük trend ──
 st.subheader("📈 Son 30 Gün Sağlık Trendi")
 random.seed(42)
 tarihler    = [datetime.date.today() - datetime.timedelta(days=i) for i in range(29, -1, -1)]
