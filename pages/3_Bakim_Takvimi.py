@@ -1,12 +1,23 @@
 import streamlit as st
 import datetime
-from weather_service import hava_durumu_kontrol
 
+# ─────────────────────────────────────────
+# LOGIN KONTROLÜ — düzeltildi
+# ─────────────────────────────────────────
 if not st.session_state.get("logged_in"):
-    st.warning("Lütfen önce giriş yapın.")
-    st.stop()
+    st.switch_page("app.py")
 
 plants = st.session_state.get("plants", [])
+
+# ─────────────────────────────────────────
+# HAVA DURUMU İMPORT — hata olursa None döner
+# ─────────────────────────────────────────
+hava = None
+try:
+    from weather_service import hava_durumu_kontrol
+    hava = hava_durumu_kontrol("Elazig")
+except Exception:
+    pass
 
 # ─────────────────────────────────────────
 # BAKIM TAKVİMİ
@@ -17,8 +28,6 @@ st.divider()
 if "done_tasks" not in st.session_state:
     st.session_state.done_tasks = set()
 
-# Hava durumuna göre uyarı
-hava = hava_durumu_kontrol("Elazig")
 if hava and hava["yagmur_var_mi"]:
     st.warning("🌧️ Bugün yağmur var — dış mekân sulama görevleri otomatik atlandı.")
 
@@ -37,7 +46,6 @@ def gorev_olustur(plants, yagmur=False):
     gorevler = []
     for p in plants:
         dis_mekan = p["konum"] in ["Balkon", "Bahçe"]
-        # Yağmur varsa dış mekân sulama görevi oluşturma
         if p["sulama_periyodu"] <= 3:
             if not (yagmur and dis_mekan):
                 gorevler.append({"bitki": p["ad"], "tur": "Sulama",   "tarih": bugun,                              "not": "Sulama zamanı geldi"})
@@ -46,7 +54,7 @@ def gorev_olustur(plants, yagmur=False):
         gorevler.append(        {"bitki": p["ad"], "tur": "Gübre",    "tarih": bugun + datetime.timedelta(days=3), "not": "Gübre zamanı"})
     return gorevler
 
-yagmur_var = hava["yagmur_var_mi"] if hava else False
+yagmur_var   = hava["yagmur_var_mi"] if hava else False
 tum_gorevler = gorev_olustur(plants, yagmur=yagmur_var)
 if filtre != "Tümü":
     tum_gorevler = [g for g in tum_gorevler if g["tur"] == filtre]
