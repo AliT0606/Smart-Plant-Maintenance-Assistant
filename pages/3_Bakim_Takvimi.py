@@ -67,13 +67,16 @@ def gorev_listele(gorev_list, baslik):
     if not gorev_list:
         return
     st.subheader(baslik)
-    for idx, g in enumerate(gorev_list):
-        gid  = f"{g['bitki']}_{g['tur']}_{idx}"
+    for g in gorev_list:
+        # Kararlı key: bitki + tür + tarih kombinasyonu (index kullanma)
+        gid  = f"{g['bitki']}_{g['tur']}_{g['tarih']}"
         ikon = IKONLAR.get(g["tur"], "📌")
         with st.container(border=True):
             c1, c2 = st.columns([5, 1])
             with c1:
-                st.write(f"{ikon} **{g['bitki']}** — {g['tur']}")
+                tamamlandi = gid in st.session_state.done_tasks
+                etiket = f"~~{ikon} **{g['bitki']}** — {g['tur']}~~" if tamamlandi else f"{ikon} **{g['bitki']}** — {g['tur']}"
+                st.write(etiket)
                 st.caption(f"{g['not']}  |  {g['tarih'].strftime('%d %b %Y')}")
             with c2:
                 done = st.checkbox("Tamam", key=f"chk_{gid}", value=(gid in st.session_state.done_tasks))
