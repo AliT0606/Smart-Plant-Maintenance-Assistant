@@ -7,7 +7,7 @@ import datetime
 def hava_durumu_kontrol(sehir="Elazig"):
     """OpenWeatherMap'ten anlık hava durumu çeker.
     Döndürür: {sicaklik, durum, yagmur_var_mi} veya None"""
-    api_key = "aabb64130ab58972ffe077601044d0a8"  # openweathermap.org'dan ücretsiz al
+    api_key = "api key buraya"  # openweathermap.org'dan ücretsiz al
     url     = f"http://api.openweathermap.org/data/2.5/weather?q={sehir}&appid={api_key}&units=metric&lang=tr"
 
     try:
@@ -22,7 +22,9 @@ def hava_durumu_kontrol(sehir="Elazig"):
         nem      = data['main']['humidity']
         uv_index = data.get('uvi', None)  # UV bazı planlarda gelir
 
-        yagmur_var_mi = durum in ["Rain", "Drizzle", "Thunderstorm"]
+        # OpenWeatherMap lang=tr ile Türkçe döndürür, her iki dili kontrol et
+        yagmur_kodlari = data["weather"][0]["id"]
+        yagmur_var_mi  = 200 <= yagmur_kodlari <= 622  # 2xx Fırtına, 3xx Çisenti, 5xx Yağmur, 6xx Kar
 
         return {
             "sicaklik":      sicaklik,
