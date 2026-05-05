@@ -18,7 +18,7 @@ The Smart Plant Maintenance Assistant is an intelligent web application designed
 
 | Component | Technology |
 | :--- | :--- |
-| **Frontend** | Python (Streamlit), Custom CSS |
+| **Frontend** | Python (Streamlit) |
 | **Backend** | Python |
 | **Database** | Microsoft SQL Server (pyodbc) |
 | **Weather API** | OpenWeatherMap API |
