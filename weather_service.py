@@ -7,15 +7,12 @@ import datetime
 def hava_durumu_kontrol(sehir="Elazig"):
     """OpenWeatherMap'ten anlık hava durumu çeker.
     Döndürür: {sicaklik, durum, yagmur_var_mi} veya None"""
-    api_key = "aabb64130ab58972ffe077601044d0a8"  # openweathermap.org'dan ücretsiz al
+    api_key = "SENIN_API_KEYIN_BURAYA"  # openweathermap.org'dan ücretsiz al
     url     = f"http://api.openweathermap.org/data/2.5/weather?q={sehir}&appid={api_key}&units=metric&lang=tr"
 
     try:
         response = requests.get(url, timeout=5)
         data     = response.json()
-
-        if data.get("cod") != 200:
-            raise ValueError(f"API hatası: {data.get('message', 'Bilinmeyen hata')}")
 
         durum    = data['weather'][0]['main']
         sicaklik = data['main']['temp']
@@ -33,15 +30,7 @@ def hava_durumu_kontrol(sehir="Elazig"):
         }
     except Exception as e:
         print(f"Hava durumu çekilemedi: {e}")
-        # API çalışmıyorsa makul bir mock döndür
-        return {
-            "sicaklik":      22.0,
-            "durum":         "Clouds",
-            "nem":           55,
-            "uv_index":      None,
-            "yagmur_var_mi": False,
-            "_mock":         True   # UI'da uyarı göstermek için
-        }
+        return None
 
 # ─────────────────────────────────────────
 # SULAMA TAVSİYESİ

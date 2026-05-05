@@ -11,7 +11,7 @@ plants = st.session_state.get("plants", [])
 # ─────────────────────────────────────────
 # DASHBOARD
 # ─────────────────────────────────────────
-st.title("🌿 Panel")
+st.title("🌿 Dashboard")
 st.caption(f"{len(plants)} Sağlıklı Bitki")
 st.divider()
 
