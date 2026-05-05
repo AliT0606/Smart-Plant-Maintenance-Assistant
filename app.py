@@ -10,118 +10,126 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ─────────────────────────────────────────
-# GLOBAL TEMA
-# ─────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
 html, body, [class*="css"] {
     font-family: 'Plus Jakarta Sans', sans-serif !important;
     background-color: #f5f0e8 !important;
     color: #2a2e27 !important;
 }
-section[data-testid="stSidebar"] {
-    background-color: #ede8dd !important;
-}
+section[data-testid="stSidebar"] { background-color: #ede8dd !important; }
 .stButton > button {
     background: linear-gradient(135deg, #1a3a1a, #2d5a27) !important;
-    color: #fff !important;
-    border: none !important;
-    border-radius: 50px !important;
-    font-weight: 600 !important;
+    color: #fff !important; border: none !important;
+    border-radius: 50px !important; font-weight: 600 !important;
 }
 .stTextInput > div > div > input {
     background-color: #edeade !important;
-    border-radius: 12px !important;
-    border: 1.5px solid #ccc8bc !important;
+    border-radius: 12px !important; border: 1.5px solid #ccc8bc !important;
 }
 [data-testid="metric-container"] {
-    background: #edeade;
-    border-radius: 16px;
-    padding: 14px 18px;
+    background: #edeade; border-radius: 16px; padding: 14px 18px;
 }
-.stTabs [data-baseweb="tab"] {
-    border-radius: 50px !important;
-    font-weight: 500 !important;
-}
-.stTabs [aria-selected="true"] {
-    background: #1a3a1a !important;
-    color: #fff !important;
-}
-.stProgress > div > div > div {
-    background: #2d5a27 !important;
-    border-radius: 99px;
-}
+.stTabs [data-baseweb="tab"] { border-radius: 50px !important; font-weight: 500 !important; }
+.stTabs [aria-selected="true"] { background: #1a3a1a !important; color: #fff !important; }
+.stProgress > div > div > div { background: #2d5a27 !important; border-radius: 99px; }
 </style>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────
-# BACKEND İMPORT — hata olursa mock kullan
+# DİL TANIMLAMALARI
 # ─────────────────────────────────────────
-try:
-    from database_handler import tum_bitkileri_getir
-    DB_AKTIF = True
-except Exception:
-    DB_AKTIF = False
+DILLER = {
+    "🇹🇷 Türkçe": {
+        "baslik":    "Bakım Asistanı",
+        "giris":     "Giriş Yap",
+        "eposta":    "E-posta",
+        "sifre":     "Şifre",
+        "cikis":     "🚪 Çıkış Yap",
+        "saglikli":  "Sağlıklı Bitki",
+        "db_uyari":  "⚠️ DB bağlantısı yok",
+        "sayfa_sec": "👈 Sol menüden bir sayfa seçin.",
+        "demo":      "Demo: herhangi @ içeren e-posta ile giriş yapabilirsiniz.",
+        "dil":       "🌐 Dil / Language",
+        "sayfalar":  ["🌿 Panel", "📚 Kütüphane", "📅 Takvim", "📊 İstatistikler", "🔬 Teşhis"],
+    },
+    "🇬🇧 English": {
+        "baslik":    "Plant Care Assistant",
+        "giris":     "Login",
+        "eposta":    "Email",
+        "sifre":     "Password",
+        "cikis":     "🚪 Logout",
+        "saglikli":  "Healthy Plants",
+        "db_uyari":  "⚠️ No DB connection",
+        "sayfa_sec": "👈 Select a page from the left menu.",
+        "demo":      "Demo: any email with @ works.",
+        "dil":       "🌐 Dil / Language",
+        "sayfalar":  ["🌿 Dashboard", "📚 Library", "📅 Calendar", "📊 Statistics", "🔬 Diagnosis"],
+    }
+}
 
 # ─────────────────────────────────────────
 # SESSION STATE
 # ─────────────────────────────────────────
+if "dil" not in st.session_state:
+    st.session_state.dil = "🇹🇷 Türkçe"
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# Mock bitki verisi — yalnızca kullanıcının hiç bitkisi yoksa ilk açılışta kullanılır
-MOCK_PLANTS = [
-    {"id": 1, "ad": "Barış Çiçeği",  "tur": "Spathiphyllum",      "ekim_tarihi": "2024-01-15", "sulama_periyodu": 2,  "konum": "Salon",  "saglik": 85, "isik": "Dolaylı Güneş"},
-    {"id": 2, "ad": "Sukulent",       "tur": "Echeveria",           "ekim_tarihi": "2024-02-20", "sulama_periyodu": 14, "konum": "Mutfak", "saglik": 95, "isik": "Tam Güneş"},
-    {"id": 3, "ad": "Orkide",         "tur": "Phalaenopsis",        "ekim_tarihi": "2024-03-10", "sulama_periyodu": 7,  "konum": "Yatak",  "saglik": 70, "isik": "Dolaylı Güneş"},
-    {"id": 4, "ad": "Para Çiçeği",    "tur": "Pilea peperomioides", "ekim_tarihi": "2024-04-05", "sulama_periyodu": 5,  "konum": "Ofis",   "saglik": 90, "isik": "Parlak Dolaylı"},
-    {"id": 5, "ad": "Pothos",         "tur": "Epipremnum aureum",   "ekim_tarihi": "2024-05-01", "sulama_periyodu": 7,  "konum": "Banyo",  "saglik": 88, "isik": "Az Işık"},
-]
+T = DILLER[st.session_state.dil]
 
-# plants session'da yoksa yükle (sayfa yenilemede tekrar yükleme yapma)
+# ─────────────────────────────────────────
+# BACKEND İMPORT
+# ─────────────────────────────────────────
+try:
+    from database_handler import tum_bitkileri_getir, saglik_hesapla, tamamlanan_gorevleri_getir
+    DB_AKTIF = True
+except Exception as e:
+    print("DB import hatası:", e)
+    DB_AKTIF = False
+
+# ─────────────────────────────────────────
+# BİTKİLERİ YÜKLE
+# ─────────────────────────────────────────
 if "plants" not in st.session_state:
-    loaded = False
     if DB_AKTIF:
-        from perenual_service import bitki_bilgisi_getir
         try:
+            from perenual_service import bitki_bilgisi_getir
             rows = tum_bitkileri_getir()
-            if rows:
-                yeni_bitkiler = []
-                for row in rows:
-                    tur = row[2]
-                    db_periyot = row[4]
-                    
-                    # Işık verisi veritabanında olmadığı için anlık olarak Mock sistemden alıyoruz
-                    api_veri = bitki_bilgisi_getir(tur)
-                    isik_verisi = api_veri["isik"] if api_veri else "Bilinmiyor"
-                    
-                    # Eğer daha önceden veritabanına hatalı kaydedilmiş 7 günlük eski bir bitkiyse, onu da düzeltiyoruz
-                    gercek_periyot = api_veri["periyot_gun"] if api_veri and db_periyot == 7 else db_periyot
-
-                    yeni_bitkiler.append({
-                        "id":             row[0],
-                        "ad":             row[1],
-                        "tur":            tur,
-                        "ekim_tarihi":    row[3],
-                        "sulama_periyodu":gercek_periyot,
-                        "konum":          row[5],
-                        "saglik":         80,
-                        "isik":           isik_verisi,
-                    })
-                st.session_state.plants = yeni_bitkiler
-                loaded = True
+            yeni_bitkiler = []
+            for row in rows:
+                tur        = row[2]
+                db_periyot = row[4]
+                son_sulama = row[7]
+                api_veri   = bitki_bilgisi_getir(tur)
+                isik       = api_veri["isik"] if api_veri else "Bilinmiyor"
+                # Artık kafasına göre hesaplamayacak, veritabanındaki gerçek sağlığı (row[6]) alacak
+                saglik     = row[6] if row[6] is not None else 80
+                yeni_bitkiler.append({
+                    "id": row[0], "ad": row[1], "tur": tur,
+                    "ekim_tarihi": row[3], "sulama_periyodu": db_periyot,
+                    "konum": row[5], "saglik": saglik, "isik": isik,
+                    "son_sulama": str(son_sulama) if son_sulama else None,
+                })
+            st.session_state.plants = yeni_bitkiler
         except Exception as e:
-            print("DB çekme hatası:", e)
-            pass
-    # DB yoksa veya boşsa: mock sadece ilk açılışta
-    if not loaded:
-        st.session_state.plants = MOCK_PLANTS
+            print("Bitki yükleme hatası:", e)
+            st.session_state.plants = []
+    else:
+        st.session_state.plants = []
 
 if "db_aktif" not in st.session_state:
     st.session_state.db_aktif = DB_AKTIF
+
+if "done_tasks" not in st.session_state:
+    if DB_AKTIF:
+        try:
+            st.session_state.done_tasks = tamamlanan_gorevleri_getir()
+        except Exception:
+            st.session_state.done_tasks = set()
+    else:
+        st.session_state.done_tasks = set()
 
 # ─────────────────────────────────────────
 # GİRİŞ PANELİ
@@ -129,35 +137,56 @@ if "db_aktif" not in st.session_state:
 if not st.session_state.logged_in:
     _, col, _ = st.columns([1, 1.2, 1])
     with col:
-        st.write("")
-        st.write("")
-        st.title("🌿 Bakım Asistanı")
-        st.caption("Akıllı Bitki Bakım Asistanınız")
+        st.write(""); st.write("")
+        st.title(f"🌿 {T['baslik']}")
+        st.caption("Akıllı Bitki Bakım Asistanınız" if st.session_state.dil == "🇹🇷 Türkçe" else "Smart Plant Care Assistant")
         st.divider()
-        email    = st.text_input("E-posta",  placeholder="ornek@mail.com")
-        password = st.text_input("Şifre",    placeholder="••••••••", type="password")
-        if st.button("Giriş Yap", use_container_width=True):
+        dil_sec = st.selectbox(T["dil"], list(DILLER.keys()), index=list(DILLER.keys()).index(st.session_state.dil))
+        if dil_sec != st.session_state.dil:
+            st.session_state.dil = dil_sec
+            st.rerun()
+        email    = st.text_input(T["eposta"], placeholder="ornek@mail.com")
+        password = st.text_input(T["sifre"],  placeholder="••••••••", type="password")
+        if st.button(T["giris"], use_container_width=True):
             if "@" in email:
                 st.session_state.logged_in  = True
                 st.session_state.user_email = email
                 st.rerun()
             else:
-                st.error("Geçerli bir e-posta girin.")
-        st.caption("Demo: herhangi @ içeren e-posta ile giriş yapabilirsiniz.")
+                st.error("Geçerli bir e-posta girin." if st.session_state.dil == "🇹🇷 Türkçe" else "Enter a valid email.")
+        st.caption(T["demo"])
     st.stop()
 
 # ─────────────────────────────────────────
-# SIDEBAR
+# NAVIGATION — sidebar sayfa isimleri dile göre değişir
+# ─────────────────────────────────────────
+isimler = T["sayfalar"]
+
+sayfalar = st.navigation({
+    f"🌿 {T['baslik']}": [
+        st.Page("pages/1_Dashboard.py",          title=isimler[0], icon="🌿"),
+        st.Page("pages/2_Bitki_Kutuphanesi.py",  title=isimler[1], icon="📚"),
+        st.Page("pages/3_Bakim_Takvimi.py",      title=isimler[2], icon="📅"),
+        st.Page("pages/4_Istatistikler.py",      title=isimler[3], icon="📊"),
+        st.Page("pages/5_Hasta_Bitki_Teshis.py", title=isimler[4], icon="🔬"),
+    ]
+})
+
+# ─────────────────────────────────────────
+# SIDEBAR — çıkış + dil
 # ─────────────────────────────────────────
 with st.sidebar:
-    st.title("🌿 Bakım Asistanı ")
-    st.caption(f"{len(st.session_state.plants)} Sağlıklı Bitki")
     st.divider()
+    dil_sec = st.selectbox(T["dil"], list(DILLER.keys()), index=list(DILLER.keys()).index(st.session_state.dil), key="sidebar_dil")
+    if dil_sec != st.session_state.dil:
+        st.session_state.dil = dil_sec
+        st.rerun()
+    st.caption(f"{len(st.session_state.plants)} {T['saglikli']}")
     if not st.session_state.db_aktif:
-        st.warning("⚠️ DB bağlantısı yok\nMock veri kullanılıyor.")
+        st.warning(T["db_uyari"])
     st.divider()
-    if st.button("🚪 Çıkış Yap"):
+    if st.button(T["cikis"]):
         st.session_state.logged_in = False
         st.rerun()
 
-st.info("👈 Sol menüden bir sayfa seçin.")
+sayfalar.run()
