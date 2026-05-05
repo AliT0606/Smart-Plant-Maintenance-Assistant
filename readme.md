@@ -1,57 +1,50 @@
 # 🌿 Smart Plant Maintenance Assistant
 
+![Python](https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
+![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white)
 
+The Smart Plant Maintenance Assistant is an intelligent web application designed to automate your indoor and outdoor plant care routines, monitor local weather, and diagnose plant diseases using symptom-based algorithms.
 
-## So what's this thing?
+## ✨ Core Features
 
-It's a web app. Tells you when to water your plants. Checks the weather so you don't water before rain. Warns you about frost. Diagnoses sick plants.
+*   **Smart Calendar:** Automatically calculates watering, fertilizing, and cleaning schedules based on plant species using a custom local database.
+*   **Weather-Aware Integration:** Fetches real-time weather data via API. If rain is expected, the system automatically skips watering reminders for outdoor plants (balcony/garden).
+*   **Algorithmic Disease Diagnosis:** Analyzes leaf condition, soil moisture, and environmental factors through custom logic to identify plant issues (e.g., root rot, fungal infections, pests) and suggests treatments. It dynamically reduces the plant's health score based on the severity of the symptoms.
+*   **Advanced Statistics:** Calculates your garden's overall health status, care delays, and your personal "Gardening Score".
+*   **Bilingual Support:** Full support for both English and Turkish interfaces.
 
-Runs in the background too. Close the tab, you'll still get notifications.
+## 🛠️ Tech Stack
 
-## What does it actually do?
+| Component | Technology |
+| :--- | :--- |
+| **Frontend** | Python (Streamlit), Custom CSS |
+| **Backend** | Python |
+| **Database** | Microsoft SQL Server (pyodbc) |
+| **Weather API** | OpenWeatherMap API |
+| **Plant Data Module** | Custom Local Service (`perenual_service.py`) |
 
-**Add a plant. That's it.**
+## 👥 Development Team & Roles
 
-Type "Monstera." The app goes and finds out how much water it needs. You don't have to Google anything.
+*   **Ali Türk (Master / Team Lead):** System integration, bug-fixing, and Full-Stack development of the algorithmic Sick Plant Diagnosis system.
+*   **Fikriye:** UI/UX design. Streamlit frontend coding for the Dashboard, Library, Calendar, and Statistics pages.
+*   **Hüseyin:** Database (SQL Server) architecture, `database_handler.py` setup, and CRUD operations.
+*   **Ünal:** OpenWeather API integration (`weather_service.py`), and backend algorithms for the Calendar and Dashboard pages.
+*   **Rasim:** Statistics and Plant Library backend architecture, data processing, and custom plant data module management.
 
-**Open it in the morning.**
+## 🔌 Data Services & APIs
 
-Here's what needs water today. Tap "I watered it." The app remembers for next time. Done.
+### 1. OpenWeatherMap API (`weather_service.py`)
+*   **Endpoint:** `http://api.openweathermap.org/data/2.5/weather`
+*   **Parameters:** `q={city_name}`, `units=metric`, `lang=en/tr`
+*   **Purpose:** Fetches real-time temperature, humidity, and weather codes. If rain codes (2xx, 3xx, 5xx) are detected, `yagmur_var_mi = True` is returned, and outdoor watering tasks are skipped.
 
-**It checks the weather for you.**
+### 2. Local Plant Data Module (`perenual_service.py`)
+*   **Purpose:** Instead of relying on external plant APIs, the system utilizes a robust, hardcoded local data dictionary. When a new plant is added, this module provides the ideal watering frequency (in days) and light requirements based on the plant's species, ensuring fast and reliable offline data access.
 
-Rain today? No watering reminder for outdoor plants. Frost coming? Big orange alert: "BRING THEM INSIDE.""
+## 🚀 Installation & Setup
 
-**Background notifications.**
-
-The app knows. When it's watering day, you get a browser notification.
-
-**Plant looks sad?**
-
-Yellow leaves? Wet soil? Pick what you see. The app tells you what's wrong and what to do about it.
-
-## What we used
-
-| Thing | What |
-|---|---|
-| Frontend | Streamlit |
-| Backend | Python |
-| Database | MS SQL Server |
-| Plant data | Perenual API |
-| Weather | OpenWeatherMap |
-
-Python 3.10+. Nothing fancy.
-
-## Who made this
-
-| Name | Did what |
-|---|---|
-| Ali Türk | Master and a bit of everything |
-| Hüseyin Altıparmak | Database + APIs |
-| Rasim Akıncı | Backend stuff |
-| M. Ünal Öztürk | Backend stuff |
-| Fikriye Akgün | Frontend |
-
-
-
-
+1. Clone the repository to your local machine.
+2. Install the required dependencies:
+   ```bash
+   pip install streamlit pyodbc pandas requests
