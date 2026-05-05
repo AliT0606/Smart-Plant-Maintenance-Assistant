@@ -6,13 +6,14 @@ from perenual_service import bitki_bilgisi_getir
 # ─────────────────────────────────────────
 def baglan():
     try:
-        server   = 'SERVER_ADIN\\SQLEXPRESS'  # Kendi server adınla değiştir!
+        server   = 'SWIPES-MONSTER\\SQLEXPRESS'
         database = 'AkilliBahceDB'
         conn = pyodbc.connect(
             f'Driver={{SQL Server}};'
             f'Server={server};'
             f'Database={database};'
             f'Trusted_Connection=yes;'
+            f'TrustServerCertificate=yes;'
         )
         return conn
     except Exception as e:
@@ -62,25 +63,21 @@ def sulama_gecmisi_getir(bitki_id):
 # ─────────────────────────────────────────
 # EKLEME
 # ─────────────────────────────────────────
-def akilli_bitki_ekle(ad, tur, ekim_tarihi, konum):
-    """Perenual API'den sulama periyodunu alarak bitkiyi DB'ye ekler."""
-    api_bilgileri     = bitki_bilgisi_getir(tur)
-    hesaplanan_periyot = 7  # Varsayılan
-
-    if api_bilgileri:
-        hesaplanan_periyot = api_bilgileri["periyot_gun"]
-        print(f"[{tur}] API bilgileri alındı — Işık: {api_bilgileri['isik']}, Periyot: {hesaplanan_periyot} gün.")
-
+# ─────────────────────────────────────────
+# EKLEME
+# ─────────────────────────────────────────
+def akilli_bitki_ekle(ad, tur, ekim_tarihi, konum, sulama_periyodu):
+    """Arayüzden (API'den) gelen hazır periyodu doğrudan veritabanına ekler."""
     conn = baglan()
     if conn:
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO Bitkiler (Ad, Tur, EkimTarihi, SulamaPeriyodu, Konum) VALUES (?, ?, ?, ?, ?)",
-            (ad, tur, ekim_tarihi, hesaplanan_periyot, konum)
+            (ad, tur, ekim_tarihi, sulama_periyodu, konum)
         )
         conn.commit()
         conn.close()
-        print(f"{ad} başarıyla veritabanına eklendi.")
+        print(f"✅ {ad} başarıyla veritabanına eklendi (Periyot: {sulama_periyodu} gün).")
 
 def sulama_kaydet(bitki_id, tarih):
     """Bir bitkinin sulandığını SulamaGecmisi tablosuna kaydeder."""
